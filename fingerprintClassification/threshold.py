@@ -154,6 +154,6 @@ elif current == 'W':
 if __name__ == '__main__':
     for i, f in enumerate(current_files):
         print(i)
-        threshold_128(in_path='trainingSet/{}/{}'.format(current, f),
-                      out_path="thresholded/{}/{}.png".format(current, f[:-4]))
+        threshold_128_text(in_path='trainingSet/{}/{}'.format(current, f),
+                           out_path="thresholded_text/{}/{}.txt".format(current, f[:-4]))
     print("{} done.".format(current))
