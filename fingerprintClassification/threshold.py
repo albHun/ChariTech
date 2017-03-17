@@ -153,8 +153,6 @@ elif current == 'W':
 
 if __name__ == '__main__':
     for i, f in enumerate(current_files):
-        if i > 10:
-            break
         print(i)
         threshold_128(in_path='trainingSet/{}/{}'.format(current, f),
                       out_path="thresholded/{}/{}.png".format(current, f[:-4]))
