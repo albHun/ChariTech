@@ -30,69 +30,86 @@ y = list()
 
 # One vs all: if this image is in class A or L
 # Using 50 images
-count = 0
+
 imageCount = 0
-totalPixels = 262144
-sampleSize = 500
+sampleSize = 50
 
 
 
 
-
-flag = False
 time0 = time.time()
-with open("F:\MyProjects\ChariTechData\A.txt") as fh:
-	image = list()
+with open(r"fingerprintClassification\thresholded_text\concatenated_single_lines\A.txt") as fh:
 	for line in fh:
-		flag = False
-		for j in line.split():
-			if count == totalPixels:
-				count = 0
-				X.append(image)
-				y.append(1)
-				image = list()
-				imageCount += 1
-				if imageCount == sampleSize:
-					flag = True
-					break 
-			image.append(int(j))
-			count += 1
-			#print(count)
-		if flag:
+		imageCount += 1
+		if imageCount >= sampleSize:
 			break
-	if len(image) > 0:
-		X.append(image)
+		ints = [int(x) for x in line]
+		print(len(X))
+		X.append(ints)
 		y.append(1)
 print(time.time() - time0)	
 print(len(X))
 print(len(y))
 
-count = 0
+
+
 imageCount = 0
-flag = False
 time0 = time.time()
-with open("F:\MyProjects\ChariTechData\A.txt") as fh:
-	image = list()
+with open(r"fingerprintClassification\thresholded_text\concatenated_single_lines\L.txt") as fh:
 	for line in fh:
-		flag = False
-		for j in line.split():
-			if count == totalPixels:
-				count = 0
-				X.append(image)
-				y.append(0)
-				image = list()
-				imageCount += 1
-				if imageCount == sampleSize:
-					flag = True
-					break 
-			image.append(int(j))
-			count += 1
-			#print(count)
-		if flag:
+		imageCount += 1
+		if imageCount >= sampleSize:
 			break
-	if len(image) > 0:
-		X.append(image)
+		ints = [int(x) for x in line]
+		X.append(ints)
 		y.append(0)
+print(time.time() - time0)	
+print(len(X))
+print(len(y))
+
+
+imageCount = 0
+time0 = time.time()
+with open(r"fingerprintClassification\thresholded_text\concatenated_single_lines\R.txt") as fh:
+	for line in fh:
+		imageCount += 1
+		if imageCount >= sampleSize:
+			break
+		ints = [int(x) for x in line]
+		X.append(ints)
+		y.append(0)
+print(time.time() - time0)	
+print(len(X))
+print(len(y))
+
+imageCount = 0
+time0 = time.time()
+with open(r"fingerprintClassification\thresholded_text\concatenated_single_lines\T.txt") as fh:
+	for line in fh:
+		imageCount += 1
+		if imageCount >= sampleSize:
+			break
+		ints = [int(x) for x in line]
+		X.append(ints)
+		y.append(0)
+print(time.time() - time0)	
+print(len(X))
+print(len(y))
+
+
+imageCount = 0
+time0 = time.time()
+with open(r"fingerprintClassification\thresholded_text\concatenated_single_lines\W.txt") as fh:
+	for line in fh:
+		imageCount += 1
+		if imageCount >= sampleSize:
+			break
+		ints = [int(x) for x in line]
+		X.append(ints)
+		y.append(0)
+print(time.time() - time0)	
+print(len(X))
+print(len(y))
 
 time1 = time.time()
 print(time1- time0)
@@ -104,19 +121,21 @@ print(time1- time0)
 # Some sort of input processing
 
 # Get input X for each image
+
 # Get output y for each image(class of fingerprint)
 #
 #
 #
 
+print("Machine Learning Begins")
 
-pca = PCA(n_components = 2000, svd_solver = 'randomized',
+pca = PCA(n_components = 50, svd_solver = 'randomized',
 	whiten = True).fit(X)
 X_reduced = pca.transform(X)
 print(len(X_reduced))
 
-clf = MLPClassifier(solver = 'lbfgs', alpha = 1e-5,
-	hidden_layer_sizes = (166, 50, 16), random_state = 1,
+clf = MLPClassifier(solver = 'adam', alpha = 1e-5, early_stopping = True,
+	hidden_layer_sizes = (30, 16), random_state = 1,
 	activation = 'relu')
 clf.fit(X_reduced, y)
 
