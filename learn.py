@@ -30,22 +30,29 @@ y = list()
 
 # One vs all: if this image is in class A or L
 # Using 50 images
-count = 1
+count = 0
 imageCount = 0
+totalPixels = 262144
+sampleSize = 500
+
+
+
+
+
 flag = False
 time0 = time.time()
-with open("A.txt") as fh:
+with open("F:\MyProjects\ChariTechData\A.txt") as fh:
 	image = list()
 	for line in fh:
 		flag = False
 		for j in line.split():
-			if count == 262144:
+			if count == totalPixels:
 				count = 0
 				X.append(image)
+				y.append(1)
 				image = list()
 				imageCount += 1
-				print(imageCount)
-				if imageCount == 50:
+				if imageCount == sampleSize:
 					flag = True
 					break 
 			image.append(int(j))
@@ -53,27 +60,29 @@ with open("A.txt") as fh:
 			#print(count)
 		if flag:
 			break
-	X.append(image)
-	y.append(1)
+	if len(image) > 0:
+		X.append(image)
+		y.append(1)
 print(time.time() - time0)	
 print(len(X))
+print(len(y))
 
-count = 1
+count = 0
 imageCount = 0
 flag = False
 time0 = time.time()
-with open("L.txt") as fh:
+with open("F:\MyProjects\ChariTechData\A.txt") as fh:
 	image = list()
 	for line in fh:
 		flag = False
 		for j in line.split():
-			if count == 262144:
+			if count == totalPixels:
 				count = 0
 				X.append(image)
+				y.append(0)
 				image = list()
 				imageCount += 1
-				print(imageCount)
-				if imageCount == 50:
+				if imageCount == sampleSize:
 					flag = True
 					break 
 			image.append(int(j))
@@ -81,10 +90,12 @@ with open("L.txt") as fh:
 			#print(count)
 		if flag:
 			break
-	X.append(image)
-	y.append(0)
-print(time.time() - time0)
-print(len(X))
+	if len(image) > 0:
+		X.append(image)
+		y.append(0)
+
+time1 = time.time()
+print(time1- time0)
 #
 #
 #
@@ -97,30 +108,31 @@ print(len(X))
 #
 #
 #
-np_X = np.array(X)
-np_Y = np.array(y)
 
-pca = PCA(n_components = 500, svd_solver = 'randomized',
+
+pca = PCA(n_components = 2000, svd_solver = 'randomized',
 	whiten = True).fit(X)
 X_reduced = pca.transform(X)
+print(len(X_reduced))
 
 clf = MLPClassifier(solver = 'lbfgs', alpha = 1e-5,
-	hidden_layer_sizes = (10, 5), random_state = 1,
+	hidden_layer_sizes = (166, 50, 16), random_state = 1,
 	activation = 'relu')
 clf.fit(X_reduced, y)
 
-
-
-
-
-
 # Test
-clf.predict(X_reduced)
+sum = 0
+for i in range(0, 50):
+	sum += clf.predict(X_reduced)[i]
+	print(clf.predict_proba(X_reduced)[i])
+print(sum/50)
 
+sum = 0
+for i in range(50, 100):
+	sum += clf.predict(X_reduced)[i]
+	print(clf.predict_proba(X_reduced)[i])
+print(1- sum/50)
 
-
-
-
-
+print(time.time() - time1)
 
 
