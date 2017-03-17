@@ -3,11 +3,10 @@ from sklearn.decomposition import PCA
 from sklearn.neural_network import MLPClassifier
 import os
 import glob
-
+import time
 
 # The variable to store input pixels
-X = list()
-y = list()
+
 
 # Read all text files in the directory
 """
@@ -24,27 +23,68 @@ for filename in glob.glob(os.path.join(file_path, '*.txt')):
 		X.append(image)
 print("DONE")
 """
-count = 0
+
+
+X = list()
+y = list()
+
+# One vs all: if this image is in class A or L
+# Using 50 images
+count = 1
 imageCount = 0
-for i in range(1, 6):
-	with open("Input{}.txt".format(i)) as fh:
-		image = list()
-		for line in fh:
-			for j in line.split():
-				if count == 262144:
-					count = 0
-					X.append(image)
-					image = list()
-					y.append(i)
-					imageCount += 1
-					if imageCount == 50:
-						break 
-				image.append(int(j))
-				count += 1
-				print(count)
-		X.append(image)
-		y.append(i)
-				
+flag = False
+time0 = time.time()
+with open("A.txt") as fh:
+	image = list()
+	for line in fh:
+		flag = False
+		for j in line.split():
+			if count == 262144:
+				count = 0
+				X.append(image)
+				image = list()
+				imageCount += 1
+				print(imageCount)
+				if imageCount == 50:
+					flag = True
+					break 
+			image.append(int(j))
+			count += 1
+			#print(count)
+		if flag:
+			break
+	X.append(image)
+	y.append(1)
+print(time.time() - time0)	
+print(len(X))
+
+count = 1
+imageCount = 0
+flag = False
+time0 = time.time()
+with open("L.txt") as fh:
+	image = list()
+	for line in fh:
+		flag = False
+		for j in line.split():
+			if count == 262144:
+				count = 0
+				X.append(image)
+				image = list()
+				imageCount += 1
+				print(imageCount)
+				if imageCount == 50:
+					flag = True
+					break 
+			image.append(int(j))
+			count += 1
+			#print(count)
+		if flag:
+			break
+	X.append(image)
+	y.append(0)
+print(time.time() - time0)
+print(len(X))
 #
 #
 #
@@ -57,12 +97,10 @@ for i in range(1, 6):
 #
 #
 #
+np_X = np.array(X)
+np_Y = np.array(y)
 
-y_vetorized = []
-for out in y:
-
-
-pca = PCA(n_component = 500, svd_solver = 'randomized',
+pca = PCA(n_components = 500, svd_solver = 'randomized',
 	whiten = True).fit(X)
 X_reduced = pca.transform(X)
 
@@ -70,3 +108,19 @@ clf = MLPClassifier(solver = 'lbfgs', alpha = 1e-5,
 	hidden_layer_sizes = (10, 5), random_state = 1,
 	activation = 'relu')
 clf.fit(X_reduced, y)
+
+
+
+
+
+
+# Test
+clf.predict(X_reduced)
+
+
+
+
+
+
+
+
