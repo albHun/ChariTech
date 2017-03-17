@@ -63,10 +63,10 @@ def threshold_128_text(in_path="trainingSet/A/f0005_03.png", out_path="threshold
                         ev += 1
             if(ev > bound):
                 # pxcom[(i - edgeL) / step, (j - edgeL) / step] = 255
-                outstring += '1 '
+                outstring += '1'
             else:
-                outstring += '0 '
-        outstring += '\n'
+                outstring += '0'
+        # outstring += '\n'
 
     with open(out_path, 'w') as outfile:
         outfile.write(outstring)
@@ -137,7 +137,7 @@ filesR = [f for f in os.listdir('trainingSet/R') if f[-4:] == '.png']
 filesT = [f for f in os.listdir('trainingSet/T') if f[-4:] == '.png']
 filesW = [f for f in os.listdir('trainingSet/W') if f[-4:] == '.png']
 
-current = 'W'
+current = 'T'
 
 if current == 'A':
     current_files = filesA
