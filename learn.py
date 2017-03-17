@@ -39,12 +39,12 @@ sampleSize = 50
 
 time0 = time.time()
 with open(r"fingerprintClassification\thresholded_text\concatenated_single_lines\A.txt") as fh:
-	for line in fh:
+	for line in fh.readlines():
+		print('xxxx')
 		imageCount += 1
 		if imageCount >= sampleSize:
 			break
-		ints = [int(x) for x in line]
-		print(len(X))
+		ints = [int(x) for x in line[:-1]]
 		X.append(ints)
 		y.append(1)
 print(time.time() - time0)	
@@ -56,11 +56,11 @@ print(len(y))
 imageCount = 0
 time0 = time.time()
 with open(r"fingerprintClassification\thresholded_text\concatenated_single_lines\L.txt") as fh:
-	for line in fh:
+	for line in fh.readlines():
 		imageCount += 1
 		if imageCount >= sampleSize:
 			break
-		ints = [int(x) for x in line]
+		ints = [int(x) for x in line[:-1]]
 		X.append(ints)
 		y.append(0)
 print(time.time() - time0)	
@@ -71,11 +71,11 @@ print(len(y))
 imageCount = 0
 time0 = time.time()
 with open(r"fingerprintClassification\thresholded_text\concatenated_single_lines\R.txt") as fh:
-	for line in fh:
+	for line in fh.readlines():
 		imageCount += 1
 		if imageCount >= sampleSize:
 			break
-		ints = [int(x) for x in line]
+		ints = [int(x) for x in line[:-1]]
 		X.append(ints)
 		y.append(0)
 print(time.time() - time0)	
@@ -85,11 +85,11 @@ print(len(y))
 imageCount = 0
 time0 = time.time()
 with open(r"fingerprintClassification\thresholded_text\concatenated_single_lines\T.txt") as fh:
-	for line in fh:
+	for line in fh.readlines():
 		imageCount += 1
 		if imageCount >= sampleSize:
 			break
-		ints = [int(x) for x in line]
+		ints = [int(x) for x in line[:-1]]
 		X.append(ints)
 		y.append(0)
 print(time.time() - time0)	
@@ -104,7 +104,7 @@ with open(r"fingerprintClassification\thresholded_text\concatenated_single_lines
 		imageCount += 1
 		if imageCount >= sampleSize:
 			break
-		ints = [int(x) for x in line]
+		ints = [int(x) for x in line[:-1]]
 		X.append(ints)
 		y.append(0)
 print(time.time() - time0)	
