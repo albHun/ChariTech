@@ -22,6 +22,6 @@ elif current == 'W':
 with open('{}.txt'.format(current), 'w') as outfile:
     for fname in current_files:
         with open('{}/{}'.format(current, fname), 'r') as infile:
-            outfile.write(infile.read())
+            outfile.write(infile.read() + '\n')
 
 print('{} concatenation done!'.format(current))

@@ -39,7 +39,7 @@ sampleSize = 1990
 
 
 time0 = time.time()
-with open(r"fingerprintClassification\thresholded_text\concatenated_line_breaked\A.txt") as fh:
+with open("fingerprintClassification/thresholded_text/concatenated_single_lines\A.txt") as fh:
 	for line in fh.readlines():
 		imageCount += 1
 		if imageCount >= sampleSize:
@@ -52,7 +52,7 @@ with open(r"fingerprintClassification\thresholded_text\concatenated_line_breaked
 
 imageCount = 0
 time0 = time.time()
-with open(r"fingerprintClassification\thresholded_text\concatenated_line_breaked\L.txt") as fh:
+with open("fingerprintClassification/thresholded_text/concatenated_single_lines\L.txt") as fh:
 	for line in fh.readlines():
 		imageCount += 1
 		if imageCount >= sampleSize:
@@ -64,7 +64,7 @@ with open(r"fingerprintClassification\thresholded_text\concatenated_line_breaked
 
 imageCount = 0
 time0 = time.time()
-with open(r"fingerprintClassification\thresholded_text\concatenated_line_breaked\R.txt") as fh:
+with open("fingerprintClassification/thresholded_text/concatenated_single_lines\R.txt") as fh:
 	for line in fh.readlines():
 		imageCount += 1
 		if imageCount >= sampleSize:
@@ -75,7 +75,7 @@ with open(r"fingerprintClassification\thresholded_text\concatenated_line_breaked
 
 imageCount = 0
 time0 = time.time()
-with open(r"fingerprintClassification\thresholded_text\concatenated_line_breaked\T.txt") as fh:
+with open("fingerprintClassification/thresholded_text/concatenated_single_lines\T.txt") as fh:
 	for line in fh.readlines():
 		imageCount += 1
 		if imageCount >= sampleSize:
@@ -87,7 +87,7 @@ with open(r"fingerprintClassification\thresholded_text\concatenated_line_breaked
 
 imageCount = 0
 time0 = time.time()
-with open(r"fingerprintClassification\thresholded_text\concatenated_line_breaked\W.txt") as fh:
+with open("fingerprintClassification/thresholded_text/concatenated_single_lines\W.txt") as fh:
 	for line in fh:
 		imageCount += 1
 		if imageCount >= sampleSize:
