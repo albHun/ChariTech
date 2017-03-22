@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.model_selection import cross_val_score
 from sklearn.decomposition import PCA
 from sklearn.neural_network import MLPClassifier
 import os
@@ -32,84 +33,68 @@ y = list()
 # Using 50 images
 
 imageCount = 0
-sampleSize = 50
+sampleSize = 1990
 
 
 
 
 time0 = time.time()
-with open(r"fingerprintClassification\thresholded_text\concatenated_single_lines\A.txt") as fh:
+with open(r"fingerprintClassification\thresholded_text\concatenated_line_breaked\A.txt") as fh:
 	for line in fh.readlines():
-		print('xxxx')
 		imageCount += 1
 		if imageCount >= sampleSize:
 			break
-		ints = [int(x) for x in line[:-1]]
+		ints = [int(x) for x in line if x != ' ' and x != '\n']
 		X.append(ints)
 		y.append(1)
-print(time.time() - time0)	
-print(len(X))
-print(len(y))
 
 
 
 imageCount = 0
 time0 = time.time()
-with open(r"fingerprintClassification\thresholded_text\concatenated_single_lines\L.txt") as fh:
+with open(r"fingerprintClassification\thresholded_text\concatenated_line_breaked\L.txt") as fh:
 	for line in fh.readlines():
 		imageCount += 1
 		if imageCount >= sampleSize:
 			break
-		ints = [int(x) for x in line[:-1]]
+		ints = [int(x) for x in line if x != ' ' and x != '\n']
 		X.append(ints)
 		y.append(0)
-print(time.time() - time0)	
-print(len(X))
-print(len(y))
 
 
 imageCount = 0
 time0 = time.time()
-with open(r"fingerprintClassification\thresholded_text\concatenated_single_lines\R.txt") as fh:
+with open(r"fingerprintClassification\thresholded_text\concatenated_line_breaked\R.txt") as fh:
 	for line in fh.readlines():
 		imageCount += 1
 		if imageCount >= sampleSize:
 			break
-		ints = [int(x) for x in line[:-1]]
+		ints = [int(x) for x in line if x != ' '  and x != '\n']
 		X.append(ints)
 		y.append(0)
-print(time.time() - time0)	
-print(len(X))
-print(len(y))
 
 imageCount = 0
 time0 = time.time()
-with open(r"fingerprintClassification\thresholded_text\concatenated_single_lines\T.txt") as fh:
+with open(r"fingerprintClassification\thresholded_text\concatenated_line_breaked\T.txt") as fh:
 	for line in fh.readlines():
 		imageCount += 1
 		if imageCount >= sampleSize:
 			break
-		ints = [int(x) for x in line[:-1]]
+		ints = [int(x) for x in line if x != ' ' and x != '\n']
 		X.append(ints)
 		y.append(0)
-print(time.time() - time0)	
-print(len(X))
-print(len(y))
 
 
 imageCount = 0
 time0 = time.time()
-with open(r"fingerprintClassification\thresholded_text\concatenated_single_lines\W.txt") as fh:
+with open(r"fingerprintClassification\thresholded_text\concatenated_line_breaked\W.txt") as fh:
 	for line in fh:
 		imageCount += 1
 		if imageCount >= sampleSize:
 			break
-		ints = [int(x) for x in line[:-1]]
+		ints = [int(x) for x in line if x != ' '  and x != '\n']
 		X.append(ints)
 		y.append(0)
-print(time.time() - time0)	
-print(len(X))
-print(len(y))
 
 time1 = time.time()
 print(time1- time0)
@@ -129,13 +114,13 @@ print(time1- time0)
 
 print("Machine Learning Begins")
 
-pca = PCA(n_components = 50, svd_solver = 'randomized',
+pca = PCA(n_components = 192, svd_solver = 'randomized',
 	whiten = True).fit(X)
 X_reduced = pca.transform(X)
-print(len(X_reduced))
+
 
 clf = MLPClassifier(solver = 'adam', alpha = 1e-5, early_stopping = True,
-	hidden_layer_sizes = (30, 16), random_state = 1,
+	hidden_layer_sizes = (100, 20, 4), random_state = 1,
 	activation = 'relu')
 clf.fit(X_reduced, y)
 
@@ -143,15 +128,16 @@ clf.fit(X_reduced, y)
 sum = 0
 for i in range(0, 50):
 	sum += clf.predict(X_reduced)[i]
-	print(clf.predict_proba(X_reduced)[i])
-print(sum/50)
+	#print(clf.predict_proba(X_reduced)[i])
+#print(sum/50)
 
 sum = 0
 for i in range(50, 100):
 	sum += clf.predict(X_reduced)[i]
-	print(clf.predict_proba(X_reduced)[i])
-print(1- sum/50)
+	#print(clf.predict_proba(X_reduced)[i])
+#print(1- sum/50)
 
-print(time.time() - time1)
-
+#print(time.time() - time1)
+scores = cross_val_score(clf, X_reduced, y)
+print(scores.mean())
 
