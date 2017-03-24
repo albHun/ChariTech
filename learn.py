@@ -2,40 +2,18 @@ import numpy as np
 from sklearn.model_selection import cross_val_score
 from sklearn.decomposition import PCA
 from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import MinMaxScaler
 import os
 import glob
 import time
 import operator
 import random
 
-# The variable to store input pixels
-
-
-# Read all text files in the directory
-"""
-file_path = 'thresholded_text\A'
-count = 0
-for filename in glob.glob(os.path.join(file_path, '*.txt')):
-	with open(filename) as fh:
-		image = list()
-		for line in fh:
-			count += 1
-			print(count)
-			for j in line.split():
-				image.append(int(j))
-		X.append(image)
-print("DONE")
-"""
-
-
 X = list()
 y = list()
 
-# One vs all: if this image is in class A or L
-# Using 50 images
-
 imageCount = 0
-sampleSize = 1000
+sampleSize = 798
 
 
 time0 = time.time()
@@ -49,8 +27,6 @@ with open("fingerprintClassification/thresholded_text/concatenated_single_lines\
 		y.append(1)
 print("Data collected")
 print(len(X))
-
-
 
 imageCount = 0
 with open("fingerprintClassification/thresholded_text/concatenated_single_lines\L.txt") as fh:
@@ -102,36 +78,7 @@ print(len(X))
 
 time1 = time.time()
 print(time1- time0)
-print(len(X))
-#
-#
-#
-#
 
-# Some sort of input processing
-
-# Get input X for each image
-
-# Get output y for each image(class of fingerprint)
-#
-#
-#
-
-def oneVsAllClassifierPrepareY(classIndex, y):
-	y_transformed = np.empty(len(y))
-	for i in range(0, len(y)):
-		if y[i] != classIndex:
-			y_transformed[i] = 0
-		else:
-			y_transformed[i] = 1
-	return y_transformed
-
-def oneVsAllClassifier(classIndex, X, y):
-	clf = MLPClassifier(solver = 'adam', alpha = 1e-5, early_stopping = True,
-	hidden_layer_sizes = (100, 20), random_state = 1,
-	activation = 'relu')
-	clf.fit(X, oneVsAllClassifierPrepareY(classIndex, y))
-	return clf
 
 def combineAndShuffle(X, y):
 	combined = [(X[i], y[i]) for i in range(0, len(X))]
@@ -146,52 +93,36 @@ print("Machine Learning Begins")
 
 
 X, y = combineAndShuffle(X, y)
-print(len(X))
+time0 = time.time()
 
-pca = PCA(n_components = 500, svd_solver = 'randomized',
+
+pca = PCA(n_components = 300, svd_solver = 'randomized',
 	whiten = True).fit(X)
 X_reduced = pca.transform(X)
+X_reduced = MinMaxScaler().fit_transform(X_reduced)
 
-print(len(X_reduced))
 # Seperating training, cross validation and test set
-X_training = X_reduced[:int(len(X_reduced) * 0.6)]
-y_training = y[:int(len(X_reduced) * 0.6)]
-X_cv = X_reduced[int(len(X_reduced) * 0.6):int(len(X_reduced) * 0.8)]
-y_cv = y[int(len(y) * 0.6):int(len(y) * 0.8)]
-X_test = X_reduced[int(len(X_reduced) * 0.8):]
-y_test = y[int(len(y) * 0.8):]
+X_training = X_reduced[:int(len(X_reduced) * 0.8)]
+y_training = y[:int(len(X_reduced) * 0.8)]
+X_cv = X_reduced[int(len(X_reduced) * 0.8):]
+y_cv = y[int(len(y) * 0.8):]
+print(X_cv)
+print(y_cv)
+#X_test = X_reduced[int(len(X_reduced) * 0.8):]
+#y_test = y[int(len(y) * 0.8):]
+
+print(time.time() - time0)
+time0 = time.time()
 
 
-# Training 5 classifiers and select the one with highest probability
-clf = oneVsAllClassifier(1, X_training, y_training)
-prob1 = clf.predict_proba(X_cv)
+hidden_layer_size_selections = [(180, 90), (200, 100), (220, 110), (240, 120), (260, 130), (280, 140), (300, 150)]
+for hidden_layer_sizes in hidden_layer_size_selections:
+	clf = MLPClassifier(hidden_layer_sizes = hidden_layer_sizes, verbose = True, random_state=1, tol = 1e-7, max_iter = 200,
+	                    solver= 'adam', learning_rate= 'constant', momentum= 0, alpha = 0.1)
+	clf.fit(X_training, y_training)
+	print("The hidden layer sizes are", hidden_layer_sizes)
+	print(clf.score(X_training, y_training))
+	print(clf.score(X_cv, y_cv))
 
-clf = oneVsAllClassifier(2, X_training, y_training)
-prob2 = clf.predict_proba(X_cv)
-
-clf = oneVsAllClassifier(3, X_training, y_training)
-prob3 = clf.predict_proba(X_cv)
-
-clf = oneVsAllClassifier(4, X_training, y_training)
-prob4 = clf.predict_proba(X_cv)
-
-clf = oneVsAllClassifier(5, X_training, y_training)
-prob5 = clf.predict_proba(X_cv)
-
-selection = list()
-for i in range(0, len(prob1)):
-	probList = [prob1[i][0], prob2[i][0], prob3[i][0], prob4[i][0], prob5[i][0]]
-	index, value = probList.index(max(probList)) + 1, probList[probList.index(max(probList))] 
-	# print(index, value)
-	selection.append((index, value))
-count = 0
-counts = {1:0, 2:0, 3:0, 4:0, 5:0,}
-for i in range(0, len(y_cv)):
-	counts[selection[i][0]] += 1
-	print(y_cv[i], selection[i][0])
-	if y_cv[i] == selection[i][0]:
-		count += 1
-print("Cross validation accuracy")
-print(count/len(y_cv))
-
-print(counts)
+time1 = time.time()
+print(time1 - time0)
